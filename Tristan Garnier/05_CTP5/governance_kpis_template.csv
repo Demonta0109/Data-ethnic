@@ -1,0 +1,8 @@
+kpi,definition_plain_words,formula_from_snapshots,target,owner_who_acts_when_red,value_W43,value_W48,status_RAG
+Ownership coverage,% of models with a named owner,models_with_owner / models_total,95%,,,,
+Documentation coverage,,,,,,,
+PII protection,,,,,,,
+Quality test pass rate,,,,,,,
+Timeliness,,,,,,,
+Access review,,,,,,,
+DSAR on time,,,,,,,

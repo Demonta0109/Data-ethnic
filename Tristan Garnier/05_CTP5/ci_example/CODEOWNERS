@@ -1,0 +1,3 @@
+# A change to a contract needs the approval of the producer AND of the main consumer.
+/contracts/payments.yaml   @shopfast/payments-team @shopfast/finance-data
+/contracts/orders.yaml     @shopfast/orders-team @shopfast/data-platform

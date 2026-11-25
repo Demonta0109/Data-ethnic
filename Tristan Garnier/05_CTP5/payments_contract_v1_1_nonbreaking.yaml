@@ -1,0 +1,115 @@
+apiVersion: v3.2.0
+kind: DataContract
+id: shopfast-payments
+name: ShopFast payments
+version: 1.1.0
+status: active
+domain: finance
+dataProduct: payments
+
+description:
+  purpose: One row per payment event (captured or refunded) sent daily by the payment team to the data platform.
+  usage: Revenue reporting (Finance monthly report, Sales dashboard), refunds analysis.
+  limitations: Amounts are in EUROS with 2 decimals. Changing the unit, the type or the name of a field is a BREAKING change (major version).
+
+team:
+  name: payments-team
+  description: Producer. Consumers are the data team (fct_orders) and Finance.
+  members:
+    - username: paul.girard
+      role: owner
+    - username: karim.benali
+      role: steward
+
+schema:
+  - name: payments
+    physicalName: payments
+    logicalType: object
+    description: Payments exported by the payment provider integration.
+    properties:
+      - name: payment_id
+        logicalType: integer
+        required: true
+        unique: true
+        primaryKey: true
+        description: Identifier of the payment event.
+      - name: order_id
+        logicalType: integer
+        required: true
+        description: Order paid or refunded.
+      - name: payment_date
+        logicalType: date
+        required: true
+        description: Date the money moved (YYYY-MM-DD).
+      - name: method
+        logicalType: string
+        required: true
+        description: card, paypal, apple_pay or bank_transfer.
+        quality:
+          - metric: invalidValues
+            arguments:
+              validValues: ['card', 'paypal', 'apple_pay', 'bank_transfer']
+            mustBe: 0
+      - name: amount
+        logicalType: number
+        required: true
+        description: Amount in EUROS with 2 decimals - NOT cents.
+        quality:
+          - type: sql
+            description: No single payment above 2,000 EUR (a value in cents would be 100x too big)
+            query: SELECT COUNT(*) FROM payments WHERE amount > 2000 OR amount <= 0
+            mustBe: 0
+          - type: sql
+            description: Average payment stays in the historical range (catches unit changes)
+            query: SELECT AVG(amount) FROM payments
+            mustBeBetween: [50, 500]
+      - name: currency
+        logicalType: string
+        required: true
+        description: ISO 4217 currency code. Only EUR today.
+        quality:
+          - metric: invalidValues
+            arguments:
+              validValues: ['EUR']
+            mustBe: 0
+      - name: card_last4
+        logicalType: string
+        required: false
+        description: Last 4 digits of the card, empty for other methods.
+        classification: confidential
+        tags: ['pii']
+      - name: payment_channel
+        logicalType: string
+        required: false
+        description: NEW optional field - web, app or marketplace.
+      - name: status
+        logicalType: string
+        required: true
+        description: captured or refunded.
+        quality:
+          - metric: invalidValues
+            arguments:
+              validValues: ['captured', 'refunded']
+            mustBe: 0
+    quality:
+      - metric: rowCount
+        mustBeGreaterThan: 100
+
+slaProperties:
+  - property: frequency
+    value: 1
+    unit: d
+    description: Delivered once a day before 06:00 Europe/Paris.
+  - property: latency
+    value: 24
+    unit: h
+
+servers:
+  - server: history
+    type: local
+    path: ../shopfast-kit/data/payments.csv
+    format: csv
+  - server: batch_2
+    type: local
+    path: payments_batch_2.csv
+    format: csv

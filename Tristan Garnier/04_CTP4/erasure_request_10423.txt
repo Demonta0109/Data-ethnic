@@ -1,0 +1,15 @@
+From:    Camille Rousseau <camille.rousseau@orange.fr>
+To:      privacy@shopfast.example
+Date:    Tue, 1 Dec 2026 08:12
+Subject: Request to delete my personal data (GDPR art. 17)
+
+Hello,
+
+I no longer want to use ShopFast. In accordance with article 17 of the GDPR, I ask you to erase all
+the personal data you hold about me, including my account, my order history, my messages to customer
+service and any marketing list. Please also stop sending me promotional emails.
+
+Please confirm in writing what you deleted, and what you kept and why.
+
+Camille Rousseau
+14 rue Paul Bert, 69003 Lyon

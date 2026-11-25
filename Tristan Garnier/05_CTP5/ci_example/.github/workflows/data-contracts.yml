@@ -1,0 +1,23 @@
+# Runs on every pull request that touches a data contract.
+# 1) lint the contract  2) test it against the data  3) block BREAKING changes vs the main branch
+name: data-contracts
+on:
+  pull_request:
+    paths: ["contracts/**"]
+jobs:
+  contracts:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with: {fetch-depth: 0}
+      - uses: actions/setup-python@v5
+        with: {python-version: "3.12"}
+      - run: pip install "datacontract-cli[duckdb]==1.2.10"
+      - name: Lint
+        run: datacontract lint contracts/payments.yaml
+      - name: Test against sample data
+        run: datacontract test --server history contracts/payments.yaml
+      - name: Block breaking changes
+        run: |
+          git show origin/${{ github.base_ref }}:contracts/payments.yaml > /tmp/payments_main.yaml
+          datacontract breaking /tmp/payments_main.yaml contracts/payments.yaml

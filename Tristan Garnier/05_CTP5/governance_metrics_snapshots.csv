@@ -1,0 +1,7 @@
+week,models_total,models_with_owner,models_with_description,columns_total,columns_documented,pii_columns_total,pii_columns_masked_for_analysts,quality_tests_total,quality_tests_passing,gold_loads_on_time,gold_loads_total,open_access_grants,access_grants_reviewed_last_90d,dsar_received,dsar_closed_within_30d
+2026-W43,7,2,2,31,4,9,0,4,3,3,5,14,2,1,0
+2026-W44,7,3,3,31,8,9,2,6,4,4,5,14,5,0,0
+2026-W45,7,5,5,31,15,9,4,12,8,4,5,12,8,2,1
+2026-W46,7,6,6,31,21,9,6,16,12,5,5,10,9,1,1
+2026-W47,7,7,7,31,25,9,8,20,17,5,5,9,9,0,0
+2026-W48,7,7,7,31,27,9,9,22,19,4,5,8,6,1,1

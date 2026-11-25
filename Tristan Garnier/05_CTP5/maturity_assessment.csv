@@ -1,0 +1,8 @@
+dimension,level_1_initial,level_2_repeatable,level_3_defined,level_4_managed,level_5_optimised,shopfast_score_18_nov,shopfast_score_2_dec,evidence
+Ownership & roles,Nobody owns data,Some owners known informally,Owner + steward named for gold data,Roles in job descriptions; RACI used,Data Council steers priorities,,,
+Data quality,Problems found by users,Ad-hoc checks,Rules + scorecard for gold data,Automated tests + alerts + SLAs,Quality trends drive investment,,,
+Metadata & catalog,No documentation,Wiki pages,Catalog for gold data,Catalog auto-updated from code (CI),Catalog used daily by all,,,
+Privacy & security,Everyone sees everything,Some grants,Classification + RBAC + masking,Access reviews + automated tests,Privacy by design in every project,,,
+Data lifecycle,Keep everything forever,Some manual deletes,Retention schedule written,Automated purge with evidence,Lifecycle drives storage costs,,,
+Contracts & change,Changes break silently,Producers warn by email,Contracts for key datasets,CI blocks breaking changes,Contracts for all data products,,,
+Metrics & reporting,No governance metrics,Occasional counts,KPIs with targets,Monthly scorecard with owners,KPIs linked to business outcomes,,,
