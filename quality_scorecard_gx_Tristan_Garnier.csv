@@ -1,0 +1,7 @@
+dimension,rule_in_plain_words,column,how_you_measured_it,failing_rows,total_rows,score_pct,severity_high_medium_low,who_should_fix_owner_steward_custodian
+Consistency,customer_id exists in the customer reference list,customer_id,"Great Expectations: values must belong to the reference set",14,5207,99.73,High,Steward
+Completeness,order_date is filled,order_date,"Great Expectations: values must never be null",11,5207,99.79,High,Owner
+Accuracy,order_date_dt is not in the future,order_date_dt,"Great Expectations: values between 2000-01-01 and 2026-11-25",5,5207,99.90,High,Owner
+Uniqueness,order_id is unique,order_id,"Great Expectations: values must be unique",14,5207,99.73,Critical,Owner
+Validity,status uses only the allowed values ,status,"Great Expectations: values must belong to the set",9,5207,99.83,Medium,Custodian
+Accuracy,total_amount_eur is between 0.01 and 10000,total_amount_eur,"Great Expectations: values between 0.01 and 10000",6,5207,99.88,Critical,Owner
