@@ -5,15 +5,64 @@ models:
     description: "One row per order with gross, refunded and net revenue. Source of the Sales dashboard and the Finance report."
     meta:
       owner: "Sara Martin (Head of Sales)"
+      steward: "Karim Benali (Analytics Engineer)"
       domain: sales
       tier: gold
     columns:
       - name: order_id
+        description: "{{ doc('order') }}"
         data_tests: [unique, not_null]
+      - name: customer_id
+        description: "Identifier of the customer account that placed the order (see dim_customers)."
+      - name: order_date
+        description: "Date the order was placed (ISO format, YYYY-MM-DD)."
+      - name: status
+        description: "Current lifecycle status of the order."
+      - name: channel
+        description: "Sales channel through which the order was placed."
+      - name: shipping_country
+        description: "Destination country of the order, as recorded in the source."
+      - name: gross_revenue_eur
+        description: "Total amount of the order in euros (EUR), including VAT, before refunds."
+      - name: refunded_eur
+        description: "Total amount refunded on the order, taken from refunded payment events. 0 if no refund."
       - name: net_revenue_eur
-        description: "TODO (Exercise 3): replace with the glossary term net_revenue using the doc() function"
-      # TODO: document the other columns
+        description: "{{ doc('net_revenue') }}"
 
   - name: dim_customers
-    description: "TODO"
-    # TODO: meta owner / steward / domain / tier, column docs, PII tags
+    description: "One row per customer account with profile attributes and lifetime metrics (number of orders, last order date, lifetime net revenue)."
+    meta:
+      owner: "Sara Martin (Head of Sales)"
+      steward: "Karim Benali (Analytics Engineer)"
+      domain: customer
+      tier: gold
+    columns:
+      - name: customer_id
+        description: "{{ doc('customer') }}"
+        data_tests: [unique, not_null]
+      - name: first_name
+        description: "Customer first name."
+        tags: ['pii']
+        meta: {classification: confidential}
+      - name: last_name
+        description: "Customer last name."
+        tags: ['pii']
+        meta: {classification: confidential}
+      - name: email
+        description: "Login email, trimmed and lower-cased."
+        tags: ['pii']
+        meta: {classification: confidential}
+      - name: country_code
+        description: "Country of residence of the customer, ISO 3166-1 alpha-2 code (FR, DE, ES, BE)."
+      - name: loyalty_tier
+        description: "Level of the customer in the loyalty programme."
+      - name: signup_date
+        description: "Date the customer account was created (ISO format, YYYY-MM-DD)."
+      - name: has_marketing_consent
+        description: "True if the customer has consented to receive marketing communications, false otherwise."
+      - name: lifetime_orders
+        description: "Total number of orders placed by this customer account."
+      - name: last_order_date
+        description: "Date of the most recent order of this customer account. Empty if no order."
+      - name: lifetime_net_revenue_eur
+        description: "Sum of net revenue (excluding VAT, after refunds) of all orders of this customer account, in euros. 0 if no order."

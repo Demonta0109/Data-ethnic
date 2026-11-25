@@ -1,0 +1,5 @@
+What breaks is The payment provider switches amounts from euros to cents. The refunded amount in fct_orders is subtracted from the order total in euros. So net revenue becomes wrong. The error flows into dim_customers, the Sales dashboard, the Finance report and the churn model.
+We need to warn Sara Martin (Sales dashboard and churn model). The CFO / Head of Finance (Finance report and payments data). Karim Benali (dbt maintenance).
+To Fix it, we divide amount by 100 in stg_payments. Keep everything downstream in euros. Update the column description.
+A test to add is to compare captured payments to the order total. Fail the build if the gap is above 1 percent. A 100x error will be caught right away.
+The one which will approves is The CFO / Head of Finance, as owner of the payments data. Sara Martin gives the business sign-off.

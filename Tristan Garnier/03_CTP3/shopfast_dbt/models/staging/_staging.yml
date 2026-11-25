@@ -20,23 +20,136 @@ models:
         description: "Login email, trimmed and lower-cased."
         tags: ['pii']
         meta: {classification: confidential}
-      # TODO: document first_name, last_name, phone, birth_date, city, country_code, signup_date,
-      #       has_marketing_consent, loyalty_tier  (description + pii tag/classification where needed)
-      # TODO: add a test: accepted_values on country_code (FR, DE, ES, BE) and on loyalty_tier
+      - name: first_name
+        description: "Customer first name."
+        tags: ['pii']
+        meta: {classification: confidential}
+      - name: last_name
+        description: "Customer last name."
+        tags: ['pii']
+        meta: {classification: confidential}
+      - name: phone
+        description: "Customer phone number, as provided at signup."
+        tags: ['pii']
+        meta: {classification: confidential}
+      - name: birth_date
+        description: "Customer date of birth (ISO format, YYYY-MM-DD)."
+        tags: ['pii']
+        meta: {classification: restricted}
+      - name: city
+        description: "City of residence of the customer."
+        tags: ['pii']
+        meta: {classification: confidential}
+      - name: country_code
+        description: "Country of residence of the customer, ISO 3166-1 alpha-2 code (FR, DE, ES, BE)."
+        data_tests:
+          - accepted_values:
+              values: ['FR', 'DE', 'ES', 'BE']
+      - name: signup_date
+        description: "Date the customer account was created (ISO format, YYYY-MM-DD)."
+      - name: has_marketing_consent
+        description: "True if the customer has consented to receive marketing communications, false otherwise."
+      - name: loyalty_tier
+        description: "Level of the customer in the loyalty programme."
+        data_tests:
+          - accepted_values:
+              values: ['bronze', 'silver', 'gold', 'platinum']
 
   - name: stg_orders
-    description: "TODO: one sentence a business user understands"
-    # TODO: meta owner / steward / domain / tier
+    description: "One row per customer order placed on any sales channel, with its status, shipping country and total amount in euros."
+    meta:
+      owner: "Sara Martin (Head of Sales)"
+      steward: "Karim Benali (Analytics Engineer)"
+      domain: sales
+      tier: gold
     columns:
       - name: order_id
+        description: "Technical identifier of the order."
         data_tests: [unique, not_null]
-      # TODO: document customer_id, order_date, status, channel, shipping_country, total_amount_eur
-      # TODO: test accepted_values on status
+      - name: customer_id
+        description: "Identifier of the customer account that placed the order (see stg_customers)."
+      - name: order_date
+        description: "Date the order was placed (ISO format, YYYY-MM-DD)."
+      - name: status
+        description: "Current lifecycle status of the order."
+        data_tests:
+          - accepted_values:
+              values: ['pending', 'shipped', 'delivered', 'cancelled', 'returned']
+      - name: channel
+        description: "Sales channel through which the order was placed (e.g. web, mobile app, store)."
+      - name: shipping_country
+        description: "Destination country of the order, ISO 3166-1 alpha-2 code."
+      - name: total_amount_eur
+        description: "Total order amount in euros (EUR), not in cents."
 
   - name: stg_order_items
     description: "One row per product line of an order."
+    meta:
+      owner: "Head of Sales"
+      steward: "Analytics Engineer"
+      domain: sales
+      tier: silver
+    columns:
+      - name: order_item_id
+        description: "Technical identifier of the order line."
+        data_tests: [unique, not_null]
+      - name: order_id
+        description: "Identifier of the order this line belongs to (see stg_orders)."
+      - name: product_id
+        description: "Identifier of the product sold on this line (see stg_products)."
+      - name: quantity
+        description: "Number of units of the product sold on this line."
+      - name: unit_price_eur
+        description: "Unit price of the product at the time of sale, in euros (EUR)."
+  
   - name: stg_payments
     description: "One row per payment event from the payment provider (captured or refunded)."
-    # TODO: what is the UNIT of amount? Document it - this is the cents incident!
+    meta:
+      owner: "CFO / Head of Finance"
+      steward: "Finance data steward"
+      domain: finance
+      tier: gold
+    columns:
+      - name: payment_id
+        description: "Technical identifier of the payment event."
+        data_tests: [unique, not_null]
+      - name: order_id
+        description: "Identifier of the order the payment relates to (see stg_orders)."
+      - name: payment_date
+        description: "Date of the payment event (ISO format, YYYY-MM-DD)."
+      - name: method
+        description: "Payment method used (e.g. card, PayPal, bank transfer)."
+      - name: amount
+        description: "Amount of the payment event, expressed in CENTS (1/100 of a euro), as sent by the payment provider. Divide by 100 to get euros. Do not compare directly with stg_orders.total_amount_eur."
+      - name: currency
+        description: "Currency of the payment amount, ISO 4217 code (e.g. EUR)."
+      - name: card_last4
+        description: "Last four digits of the card used for the payment. Empty for non-card methods."
+        tags: ['pii']
+        meta: {classification: restricted}
+      - name: payment_status
+        description: "Status of the payment event: captured or refunded."
+  
   - name: stg_products
     description: "Product catalogue with list prices."
+    meta:
+      owner: "Head of Merchandising"
+      steward: "Product data steward"
+      domain: product
+      tier: silver
+    columns:
+      - name: product_id
+        description: "Technical identifier of the product."
+        data_tests: [unique, not_null]
+      - name: sku
+        description: "Stock keeping unit: the product's unique reference code in the catalogue."
+      - name: product_name
+        description: "Commercial name of the product."
+      - name: category
+        description: "Product category, cleaned to a consistent capitalisation."
+      - name: list_price_eur
+        description: "Current list price of the product, in euros (EUR). Can be empty if the price is missing in the source."
+      - name: supplier
+        description: "Name of the supplier of the product."
+      - name: is_active
+        description: "True if the product is currently sellable in the catalogue, false otherwise."
